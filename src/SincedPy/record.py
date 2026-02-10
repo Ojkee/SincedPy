@@ -27,6 +27,9 @@ class RecordStatus(Enum):
                 return member
         raise ValueError(f"{status!r} in not a valid RecordStatus")
 
+    def __str__(self) -> str:
+        return self.value
+
 
 class RecordCategory:
     PREFIX = "@"
@@ -46,6 +49,9 @@ class RecordCategory:
     def valid(cls, category: str) -> bool:
         return category.startswith(cls.PREFIX)
 
+    def __str__(self) -> str:
+        return self.value
+
 
 @dataclass
 class Record:
@@ -54,7 +60,7 @@ class Record:
     category: str | None = field(default=None)
     user_date: datetime | None = field(default=None)
     recurring_delta: relativedelta | None = field(default=None)
-    status: str = field(default=RecordStatus.ONGOING.value)
+    status: RecordStatus = field(default=RecordStatus.ONGOING)
 
     @classmethod
     def from_dict(cls, data: dict[str, Any]) -> Record:
@@ -67,10 +73,13 @@ class Record:
         return cls(**parsed)
 
     def to_dict(self) -> dict[str, SupportStr]:
-        return {
-            k: (v.isoformat() if isinstance(v, datetime) else v)
-            for k, v in self.__dict__.items()
-        }
+        parsed: dict[str, SupportStr] = {}
+        for key, value in self.__dict__.items():
+            if isinstance(value, datetime):
+                parsed[key] = value.isoformat()
+            else:
+                parsed[key] = str(value)
+        return parsed
 
     def __str__(self) -> str:
         date = (

@@ -5,9 +5,10 @@
 - [ ] Setting status
 - [ ] Logging with status filtering
 - [ ] Documentation in README
+- [ ] Removing records by title
+- [ ] Prevent appending records with title that already exists in database
 
 # Current
-- [ ] Fixing log all
 
 
 # Done
@@ -18,3 +19,4 @@
 - [x] Adding with dates
 - [x] Adding with recurring dates
 - [x] Removing all
+- [x] Fixing log all
