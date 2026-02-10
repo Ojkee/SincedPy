@@ -1,9 +1,9 @@
+from functools import singledispatchmethod
 from tinydb import TinyDB, Query
-from pprint import pprint
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
 
-from SincedPy.record import Record
+from SincedPy.record import Record, RecordStatus, RecordCategory
 
 
 class DatabaseHandler:
@@ -21,9 +21,8 @@ class DatabaseHandler:
                 try:
                     n = int(flag_param)
                 except ValueError:
-                    raise ValueError(
-                        f"value after {flag} needs to be a number"
-                    ) from None
+                    err_msg = f"Value after {flag} needs to be a number"
+                    raise ValueError(err_msg) from None
                 delta = self.make_delta(flag[1:], n)
                 user_date = datetime.fromisoformat(user_date)
                 return Record(title, user_date=user_date, recurring_delta=delta)
@@ -34,10 +33,30 @@ class DatabaseHandler:
         self._db.insert(record.to_dict())
 
     def log_all(self) -> None:
-        records = self._db.all()
-        pprint(records or "No records")
+        records = list(map(Record.from_dict, self._db.all()))
+        if len(records) == 0:
+            print("No records")
+            return
+        for record in records:
+            print(record)
 
-    def log_record(self, title: str) -> None:
+    @singledispatchmethod
+    def log_by(self, obj: object) -> None:
+        not_impl_err = f"Log dispatch not implemented for type `{type(obj).__name__}`"
+        raise NotImplementedError(not_impl_err)
+
+    @log_by.register
+    def _(self, status: RecordStatus) -> None:
+        record_q = Query()
+        record = self._db.get(record_q.status == status.value)
+        assert not isinstance(record, list)
+        if record is None:
+            print(f"no record titled `{status}`")
+            return
+        print(Record.from_dict(record))
+
+    @log_by.register
+    def _(self, title: str) -> None:
         record_q = Query()
         record = self._db.get(record_q.title == title)
         assert not isinstance(record, list)
@@ -46,11 +65,12 @@ class DatabaseHandler:
             return
         print(Record.from_dict(record))
 
-    def log_category(self, category: str) -> None:
+    @log_by.register
+    def _(self, category: RecordCategory) -> None:
         category_q = Query()
-        records = self._db.search(category_q.category == category)
+        records = self._db.search(category_q.category == category.value)
         if records is None:
-            print(f"no category `{category}`")
+            print(f"no category `{category.value}`")
             return
 
         if not isinstance(records, list) and records is not None:

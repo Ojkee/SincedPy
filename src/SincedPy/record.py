@@ -1,5 +1,5 @@
 from __future__ import annotations
-from enum import IntEnum, auto
+from enum import Enum
 from dataclasses import dataclass, field
 from typing import Any, Protocol
 from datetime import datetime
@@ -10,10 +10,41 @@ class SupportStr(Protocol):
     def __str__(self) -> str: ...
 
 
-class RecordStatus(IntEnum):
-    ONGOING = auto()
-    DONE = auto()
-    CANCELED = auto()
+class RecordStatus(Enum):
+    ONGOING = "ONGOING"
+    DONE = "DONE"
+    CANCELED = "CANCELED"
+
+    @classmethod
+    def valid(cls, status: str) -> bool:
+        return any(status.upper() == member.value for member in cls)
+
+    @classmethod
+    def from_str(cls, status: str) -> RecordStatus:
+        status = status.upper()
+        for member in cls:
+            if status == member.value or status == member.name:
+                return member
+        raise ValueError(f"{status!r} in not a valid RecordStatus")
+
+
+class RecordCategory:
+    PREFIX = "@"
+
+    def __init__(self, category: str) -> None:
+        self._value = category
+
+    @property
+    def value(self) -> str:
+        return RecordCategory._trim(self._value)
+
+    @classmethod
+    def _trim(cls, data: str) -> str:
+        return data.lstrip(cls.PREFIX)
+
+    @classmethod
+    def valid(cls, category: str) -> bool:
+        return category.startswith(cls.PREFIX)
 
 
 @dataclass
@@ -23,7 +54,7 @@ class Record:
     category: str | None = field(default=None)
     user_date: datetime | None = field(default=None)
     recurring_delta: relativedelta | None = field(default=None)
-    status: RecordStatus = field(default=RecordStatus.ONGOING)
+    status: str = field(default=RecordStatus.ONGOING.value)
 
     @classmethod
     def from_dict(cls, data: dict[str, Any]) -> Record:

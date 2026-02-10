@@ -4,12 +4,9 @@ from pathlib import Path
 from tinydb import TinyDB
 
 from SincedPy.database_handler import DatabaseHandler
+from SincedPy.record import RecordCategory, RecordStatus
 
 _DATA_PATH = Path(__file__).parents[2] / "records" / "data.json"
-
-
-def is_category(category: str) -> bool:
-    return category.startswith("@")
 
 
 def main(params: list[str]) -> None:
@@ -17,17 +14,19 @@ def main(params: list[str]) -> None:
     handler = DatabaseHandler(db)
 
     match params:
-        case ["add", category, *record] if is_category(category):
+        case ["add", category, *record] if RecordCategory.valid(category):
             new_record = handler.make_record(*record)
             new_record.category = category[1:]
             handler.append_record(new_record)
         case ["add", *record]:
             new_record = handler.make_record(*record)
             handler.append_record(new_record)
-        case ["log", category] if is_category(category):
-            handler.log_category(category[1:])
+        case ["log", category] if RecordCategory.valid(category):
+            handler.log_by(RecordCategory(category))
+        case ["log", status] if RecordStatus.valid(status):
+            handler.log_by(RecordStatus.from_str(status))
         case ["log", record_name]:
-            handler.log_record(record_name)
+            handler.log_by(record_name)
         case ["log"]:
             handler.log_all()
         case ["REMOVE!"]:
