@@ -10,25 +10,6 @@ class DatabaseHandler:
     def __init__(self, database: TinyDB) -> None:
         self._db = database
 
-    def make_record(self, *record_data: str, category: str | None = None) -> Record:
-        match record_data:
-            case (title,):
-                return Record(title, category=category)
-            case (title, user_date):
-                user_date = datetime.fromisoformat(user_date)
-                return Record(title, user_date=user_date)
-            case (title, user_date, flag, flag_param) if flag.startswith("-"):
-                try:
-                    n = int(flag_param)
-                except ValueError:
-                    err_msg = f"Value after {flag} needs to be a number"
-                    raise ValueError(err_msg) from None
-                delta = self.make_delta(flag[1:], n)
-                user_date = datetime.fromisoformat(user_date)
-                return Record(title, user_date=user_date, recurring_delta=delta)
-            case _:
-                raise ValueError("INVALID INPUT - TODO: make helper msg")
-
     def append_record(self, record: Record) -> None:
         self._db.insert(record.to_dict())
 
@@ -79,18 +60,43 @@ class DatabaseHandler:
         for record in map(Record.from_dict, records):
             print(record)
 
+    def drop(self, record: Record) -> None:
+        _ = record
+        raise NotImplementedError("DatabaseHandler.drop")
+
     def drop_all(self) -> None:
         self._db.drop_tables()
 
-    def make_delta(self, flag: str, n: int) -> relativedelta:
-        match flag:
-            case "y":
-                return relativedelta(years=n)
-            case "m":
-                return relativedelta(months=n)
-            case "w":
-                return relativedelta(weeks=n)
-            case "d":
-                return relativedelta(days=n)
-            case _:
-                raise ValueError(f"Invalid flag: {flag}, pick from y/m/w/d")
+
+def make_record(*record_data: str) -> Record:
+    match record_data:
+        case (title,):
+            return Record(title)
+        case (title, user_date):
+            user_date = datetime.fromisoformat(user_date)
+            return Record(title, user_date=user_date)
+        case (title, user_date, flag, flag_param) if flag.startswith("-"):
+            try:
+                n = int(flag_param)
+            except ValueError:
+                err_msg = f"Value after {flag} needs to be a number"
+                raise ValueError(err_msg) from None
+            delta = make_delta(flag[1:], n)
+            user_date = datetime.fromisoformat(user_date)
+            return Record(title, user_date=user_date, recurring_delta=delta)
+        case _:
+            raise ValueError("INVALID INPUT - TODO: make helper msg")
+
+
+def make_delta(flag: str, n: int) -> relativedelta:
+    match flag:
+        case "y":
+            return relativedelta(years=n)
+        case "m":
+            return relativedelta(months=n)
+        case "w":
+            return relativedelta(weeks=n)
+        case "d":
+            return relativedelta(days=n)
+        case _:
+            raise ValueError(f"Invalid flag: {flag}, pick from y/m/w/d")

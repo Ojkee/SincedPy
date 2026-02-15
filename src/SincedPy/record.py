@@ -70,6 +70,8 @@ class Record:
                 parsed[key] = datetime.fromisoformat(value)
             except (TypeError, ValueError):
                 parsed[key] = value
+            if value == "None":
+                parsed[key] = None
         return cls(**parsed)
 
     def to_dict(self) -> dict[str, SupportStr]:
