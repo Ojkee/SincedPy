@@ -7,7 +7,9 @@ from tinydb import TinyDB
 from SincedPy.database_handler import DatabaseHandler
 from SincedPy.commands import AppendRecord, LogRecords, RemoveRecords
 
-_RECORDS_PATH = Path(__file__).parents[2] / "records" / "data.json"
+_RECORD_DIR_PATH = Path(__file__).parents[2] / "records"
+_RECORDS_PATH = _RECORD_DIR_PATH / "data.json"
+# _HISORY_PATH = _RECORDS_PATH / "history.json"
 
 
 def main(params: list[str]) -> None:
@@ -25,10 +27,18 @@ def main(params: list[str]) -> None:
     command_builer = commands.get(command_name, None)
     if command_builer is None:
         print(f"There is no command named `{command_name}`")
+        print(f"Available commands: {format_commands(commands)}")
         return
 
     command = command_builer(*rest)
     command.execute()
+
+
+def format_commands(commands: dict[str, Callable]) -> str:
+    def fmt_cmd(cmd: str) -> str:
+        return f"\n\t- {cmd}"
+
+    return "".join(map(fmt_cmd, commands.keys()))
 
 
 if __name__ == "__main__":
