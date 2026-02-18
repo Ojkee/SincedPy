@@ -10,6 +10,7 @@ from SincedPy.commands import AppendRecord, LogRecords, RemoveRecords
 _RECORD_DIR_PATH = Path(__file__).parents[2] / "records"
 _RECORDS_PATH = _RECORD_DIR_PATH / "data.json"
 # _HISORY_PATH = _RECORDS_PATH / "history.json"
+#
 
 
 def main(params: list[str]) -> None:

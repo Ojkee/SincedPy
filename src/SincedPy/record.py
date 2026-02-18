@@ -1,7 +1,8 @@
 from __future__ import annotations
+import json
 from enum import Enum
 from dataclasses import dataclass, field
-from typing import Any, Protocol
+from typing import Any, Callable, Protocol
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
 
@@ -66,14 +67,23 @@ class Record:
 
     @classmethod
     def from_dict(cls, data: dict[str, Any]) -> Record:
+        ctors: list[Callable[[str], Any]] = [
+            datetime.fromisoformat,
+            relativedelta_of_string,
+        ]
         parsed = {}
         for key, value in data.items():
-            try:
-                parsed[key] = datetime.fromisoformat(value)
-            except (TypeError, ValueError):
-                parsed[key] = value
             if value == "None":
                 parsed[key] = None
+                continue
+            for ctor in ctors:
+                field = field_of_string(value, ctor)
+                if field is not None:
+                    parsed[key] = field
+                    break
+                else:
+                    parsed[key] = value
+
         return cls(**parsed)
 
     def to_dict(self) -> dict[str, SupportStr]:
@@ -81,8 +91,11 @@ class Record:
         for key, value in self.__dict__.items():
             if isinstance(value, datetime):
                 parsed[key] = value.isoformat()
+            elif isinstance(value, relativedelta):
+                parsed[key] = string_of_delta(value)
             else:
                 parsed[key] = str(value)
+
         return parsed
 
     def __str__(self) -> str:
@@ -99,6 +112,10 @@ class Record:
             case (title, user_date):
                 user_date = datetime.fromisoformat(user_date)
                 return Record(title, user_date=user_date)
+            case (title, user_date, flag) if flag.startswith("-"):
+                delta = make_delta(flag[1:])
+                user_date = datetime.fromisoformat(user_date)
+                return Record(title, user_date=user_date, recurring_delta=delta)
             case (title, user_date, flag, flag_param) if flag.startswith("-"):
                 try:
                     n = int(flag_param)
@@ -111,8 +128,13 @@ class Record:
             case _:
                 raise ValueError("INVALID INPUT - TODO: make helper msg")
 
+    def next_appear(self) -> Record:
+        if not self.recurring_delta:
+            return self
+        return self
 
-def make_delta(flag: str, n: int) -> relativedelta:
+
+def make_delta(flag: str, n: int = 1) -> relativedelta:
     match flag:
         case "y":
             return relativedelta(years=n)
@@ -124,3 +146,30 @@ def make_delta(flag: str, n: int) -> relativedelta:
             return relativedelta(days=n)
         case _:
             raise ValueError(f"Invalid flag: {flag}, pick from y/m/w/d")
+
+
+def field_of_string[T](field: str, ctor: Callable[[str], T]) -> T | None:
+    try:
+        return ctor(field)
+    except (TypeError, ValueError):
+        return None
+
+
+def rd_to_dict(rd: relativedelta) -> dict[str, int]:
+    return {
+        "years": rd.years,
+        "months": rd.months,
+        "weeks": rd.weeks,
+        "days": rd.days,
+    }
+
+
+def relativedelta_of_string(field: str) -> relativedelta | None:
+    try:
+        return relativedelta(**json.loads(field))
+    except Exception:
+        return None
+
+
+def string_of_delta(delta: relativedelta) -> str:
+    return str(rd_to_dict(delta))
