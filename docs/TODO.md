@@ -3,10 +3,12 @@
 - [ ] Setting status
 - [ ] Documentation in README
 - [ ] Prevent appending records with title that already exists in database
+- [ ] Mix logging parameters (e.g. @birthdays -w should show birthdays in current week)
+- [ ] Make recurring relative to creation date if user date is not provided
 
 # Current
-- [ ] Logging with date sorting 
 - [ ] Logging with week/month time period
+- [ ] Logging with date sorting 
 
 
 # Done

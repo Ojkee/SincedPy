@@ -130,11 +130,23 @@ class Record:
                 raise ValueError("INVALID INPUT - TODO: make helper msg")
 
     def next_appearance(self) -> Record:
-        if self.recurring_delta is None or self.user_date is None:
+        if not self.recurring_delta or not self.user_date:
             return self
-        while self.user_date < datetime.now():
-            self.user_date += self.recurring_delta
-        return self
+
+        new_date = self.user_date
+        now = datetime.now()
+
+        while new_date < now:
+            new_date += self.recurring_delta
+
+        return Record(
+            title=self.title,
+            date_created=self.date_created,
+            category=self.category,
+            user_date=new_date,
+            recurring_delta=self.recurring_delta,
+            status=self.status,
+        )
 
 
 def make_delta(flag: str, n: int = 1) -> relativedelta:
@@ -170,9 +182,9 @@ def rd_to_dict(rd: relativedelta) -> dict[str, int]:
 def relativedelta_of_string(field: str) -> relativedelta | None:
     try:
         return relativedelta(**json.loads(field))
-    except Exception:
+    except json.JSONDecodeError:
         return None
 
 
 def string_of_delta(delta: relativedelta) -> str:
-    return str(rd_to_dict(delta))
+    return json.dumps(rd_to_dict(delta))

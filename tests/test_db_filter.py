@@ -53,7 +53,7 @@ CASES: list[Case] = [
         ],
     ),
     Case(
-        name="By Week",
+        name="By Delta: Week",
         all_records=[
             Record("A", user_date=datetime.now() + relativedelta(days=1)),
             Record("B"),
@@ -63,6 +63,43 @@ CASES: list[Case] = [
         param="-w",
         expected=[
             Record("A", user_date=datetime.now() + relativedelta(days=1)),
+        ],
+    ),
+    Case(
+        name="By Delta: Year with recurring",
+        all_records=[
+            Record("A", user_date=datetime.now() - relativedelta(years=3, months=2)),
+            Record(
+                "B",
+                user_date=datetime.now() - relativedelta(years=3, months=2),
+                recurring_delta=relativedelta(years=1),
+            ),
+            Record("C"),
+            Record("D", user_date=datetime.now() + relativedelta(months=2)),
+            Record("E", user_date=datetime.now() + relativedelta(years=1, months=1)),
+            Record(
+                "F",
+                user_date=datetime.now() - relativedelta(years=1, months=11),
+                recurring_delta=relativedelta(months=1),
+            ),
+        ],
+        param="-y",
+        expected=[
+            Record(
+                "B",
+                user_date=datetime.now()
+                - relativedelta(years=3, months=2)
+                + relativedelta(years=4),
+                recurring_delta=relativedelta(years=1),
+            ),
+            Record("D", user_date=datetime.now() + relativedelta(months=2)),
+            Record(
+                "F",
+                user_date=datetime.now()
+                - relativedelta(years=1, months=11)
+                + relativedelta(years=2),
+                recurring_delta=relativedelta(months=1),
+            ),
         ],
     ),
 ]
