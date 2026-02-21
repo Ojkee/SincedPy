@@ -97,7 +97,7 @@ class DatabaseHandler:
         validators = [
             (RecordCategory.valid, lambda c: RecordCategory(c)),
             (RecordStatus.valid, lambda s: RecordStatus.from_str(s)),
-            (lambda f: f in ["-y", "-m", "-w", "-d"], lambda f: make_delta(f)),
+            (lambda f: f in ["-y", "-m", "-w", "-d"], lambda f: make_delta(f[1])),
         ]
 
         for valid, factory in validators:

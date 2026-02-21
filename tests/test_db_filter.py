@@ -1,4 +1,6 @@
 from dataclasses import dataclass
+from datetime import datetime
+from dateutil.relativedelta import relativedelta
 import pytest
 
 from SincedPy.database_handler import DatabaseHandler
@@ -50,13 +52,26 @@ CASES: list[Case] = [
             Record("C", category="bar", status=RecordStatus.DONE),
         ],
     ),
+    Case(
+        name="By Week",
+        all_records=[
+            Record("A", user_date=datetime.now() + relativedelta(days=1)),
+            Record("B"),
+            Record("C"),
+            Record("D"),
+        ],
+        param="-w",
+        expected=[
+            Record("A", user_date=datetime.now() + relativedelta(days=1)),
+        ],
+    ),
 ]
 
 
 @pytest.mark.parametrize("case", CASES, ids=lambda c: c.name)
-def test_db_filtering(case: Case, db_handler: DatabaseHandler, freeze_records):
-    all_records = freeze_records(case.all_records)
-    expected = freeze_records(case.expected)
+def test_db_filtering(case: Case, db_handler: DatabaseHandler, precision_to_day):
+    all_records = precision_to_day(case.all_records)
+    expected = precision_to_day(case.expected)
 
     for record in all_records:
         db_handler.append_record(record)
