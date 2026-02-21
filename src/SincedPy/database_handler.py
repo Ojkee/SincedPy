@@ -1,10 +1,10 @@
 from datetime import datetime
 from functools import singledispatchmethod
-from typing import Generator
+from typing import Any, Generator
 from dateutil.relativedelta import relativedelta
 from tinydb import TinyDB, Query
 
-from SincedPy.record import Record, RecordStatus, RecordCategory
+from SincedPy.record import Record, RecordStatus, RecordCategory, make_delta
 
 
 class DatabaseHandler:
@@ -91,3 +91,16 @@ class DatabaseHandler:
     def _(self, title: str) -> None:
         name_q = Query()
         self._db.remove(name_q.title == title)
+
+    @staticmethod
+    def option_of_param(param: str) -> Any:
+        validators = [
+            (RecordCategory.valid, lambda c: RecordCategory(c)),
+            (RecordStatus.valid, lambda s: RecordStatus.from_str(s)),
+            (lambda f: f in ["-y", "-m", "-w", "-d"], lambda f: make_delta(f)),
+        ]
+
+        for valid, factory in validators:
+            if valid(param):
+                return factory(param)
+        return param

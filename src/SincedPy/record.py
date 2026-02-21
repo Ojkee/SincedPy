@@ -70,6 +70,7 @@ class Record:
         ctors: list[Callable[[str], Any]] = [
             datetime.fromisoformat,
             relativedelta_of_string,
+            RecordStatus.from_str,
         ]
         parsed = {}
         for key, value in data.items():
