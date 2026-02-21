@@ -1,4 +1,7 @@
+from datetime import datetime
 from functools import singledispatchmethod
+from typing import Generator
+from dateutil.relativedelta import relativedelta
 from tinydb import TinyDB, Query
 
 from SincedPy.record import Record, RecordStatus, RecordCategory
@@ -11,52 +14,58 @@ class DatabaseHandler:
     def append_record(self, record: Record) -> None:
         self._db.insert(record.to_dict())
 
-    def log_all(self) -> None:
-        records = list(map(Record.from_dict, self._db.all()))
-        if len(records) == 0:
-            print("No records")
-            return
-        for record in records:
-            print(record)
+    def all_records(self) -> Generator[Record]:
+        for rec in map(Record.from_dict, self._db.all()):
+            yield rec
 
     @singledispatchmethod
-    def log_by(self, obj: object) -> None:
+    def filter_by(self, obj: object) -> list[Record]:
         not_impl_err = f"Log dispatch not implemented for type `{type(obj).__name__}`"
         raise NotImplementedError(not_impl_err)
 
-    @log_by.register
-    def _(self, status: RecordStatus) -> None:
-        record_q = Query()
-        record = self._db.get(record_q.status == status.value)
-        assert not isinstance(record, list)
-        if record is None:
-            print(f"no record titled `{status}`")
-            return
-        print(Record.from_dict(record))
-
-    @log_by.register
-    def _(self, title: str) -> None:
+    @filter_by.register
+    def _(self, title: str) -> list[Record]:
         record_q = Query()
         record = self._db.get(record_q.title == title)
         assert not isinstance(record, list)
         if record is None:
-            print(f"no record titled `{title}`")
-            return
-        print(Record.from_dict(record))
+            return []
+        return [Record.from_dict(record)]
 
-    @log_by.register
-    def _(self, category: RecordCategory) -> None:
+    @filter_by.register
+    def _(self, status: RecordStatus) -> list[Record]:
+        category_q = Query()
+        records = self._db.search(category_q.status == status.value)
+        if records is None:
+            return []
+
+        if not isinstance(records, list):
+            return [Record.from_dict(records)]
+
+        return list(map(Record.from_dict, records))
+
+    @filter_by.register
+    def _(self, category: RecordCategory) -> list[Record]:
         category_q = Query()
         records = self._db.search(category_q.category == category.value)
         if records is None:
-            print(f"no category `{category.value}`")
-            return
+            return []
 
-        if not isinstance(records, list) and records is not None:
-            print(Record.from_dict(records))
+        if not isinstance(records, list):
+            return [Record.from_dict(records)]
 
-        for record in map(Record.from_dict, records):
-            print(record)
+        return list(map(Record.from_dict, records))
+
+    @filter_by.register
+    def _(self, delta: relativedelta) -> list[Record]:
+        next_appears = map(lambda r: r.next_appearance(), self.all_records())
+        lhs = datetime.now()
+        rhs = lhs + delta
+
+        def in_time_range(r: Record) -> bool:
+            return r.user_date is not None and lhs <= r.user_date <= rhs
+
+        return list(filter(in_time_range, next_appears))
 
     def drop_all(self) -> None:
         self._db.drop_tables()

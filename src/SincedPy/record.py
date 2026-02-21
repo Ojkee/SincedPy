@@ -128,9 +128,11 @@ class Record:
             case _:
                 raise ValueError("INVALID INPUT - TODO: make helper msg")
 
-    def next_appear(self) -> Record:
-        if not self.recurring_delta:
+    def next_appearance(self) -> Record:
+        if self.recurring_delta is None or self.user_date is None:
             return self
+        while self.user_date < datetime.now():
+            self.user_date += self.recurring_delta
         return self
 
 
