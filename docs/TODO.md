@@ -7,11 +7,11 @@
 - [ ] Make recurring relative to creation date if user date is not provided
 
 # Current
-- [ ] Logging with week/month time period
 - [ ] Logging with date sorting 
 
 
 # Done
+- [x] Logging with week/month time period
 - [x] Removing records by title
 - [x] Logging all
 - [x] Logging by title

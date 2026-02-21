@@ -9,12 +9,14 @@ class LogRecords(CommandPattern):
 
     def execute(self) -> None:
         if len(self._params) == 0:
-            records = list(self._db_handler.all_records())
-            print("No record fulfills this cirteria" if len(records) == 0 else records)
-            return
+            records = self._db_handler.all_records()
+        else:
+            option = DatabaseHandler.option_of_param(self._params[0])
+            records = self._db_handler.filter_by(option)
 
-        option = DatabaseHandler.option_of_param(self._params[0])
-        records = self._db_handler.filter_by(option)
+        records = map(lambda r: r.next_appearance(), self._db_handler.all_records())
+        records = sorted(records, key=lambda r: (r.user_date is None, r.user_date))
+        records = list(map(str, records))
         print("No record fullfil this cirteria" if len(records) == 0 else records)
 
     def undo(self) -> None:
