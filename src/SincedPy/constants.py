@@ -1,8 +1,20 @@
+from tinydb import TinyDB
+
+from SincedPy.database_handler import DatabaseHandler
+from pathlib import Path
+
+
 class Context:
     SPELLING_DISTANCE = 2
+    RECORD_DIR_PATH = Path(__file__).parents[2] / "records"
+    RECORDS_PATH = RECORD_DIR_PATH / "data.json"
+
+
+# _HISORY_PATH = _RECORDS_DIR_PATH / "history.json"
 
 
 _ctx: Context | None = None
+_db_handler: DatabaseHandler | None = None
 
 
 def get_ctx() -> Context:
@@ -10,3 +22,11 @@ def get_ctx() -> Context:
     if _ctx is None:
         _ctx = Context()
     return _ctx
+
+
+def get_db_handler() -> DatabaseHandler:
+    global _db_handler
+    if _db_handler is None:
+        _records_db = TinyDB(get_ctx().RECORDS_PATH)
+        _db_handler = DatabaseHandler(_records_db)
+    return _db_handler

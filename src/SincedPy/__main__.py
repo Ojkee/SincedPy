@@ -1,20 +1,13 @@
 import sys
-from pathlib import Path
 from typing import Callable
 
-from tinydb import TinyDB
-
-from SincedPy.database_handler import DatabaseHandler
 from SincedPy.commands import AppendRecord, LogRecords, RemoveRecords
-
-_RECORD_DIR_PATH = Path(__file__).parents[2] / "records"
-_RECORDS_PATH = _RECORD_DIR_PATH / "data.json"
-# _HISORY_PATH = _RECORDS_DIR_PATH / "history.json"
+from SincedPy.constants import get_db_handler
 
 
 def main(params: list[str]) -> None:
-    records_db = TinyDB(_RECORDS_PATH)
-    handler = DatabaseHandler(records_db)
+    handler = get_db_handler()
+
     commands: dict[str, Callable] = {
         "add": lambda *args: AppendRecord(handler, *args),
         "log": lambda *args: LogRecords(handler, *args),
