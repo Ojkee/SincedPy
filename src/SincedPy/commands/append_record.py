@@ -24,7 +24,7 @@ class AppendRecord(CommandPattern):
         similar_title_record = self._record_with_similar_title(new_record.title)
         if similar_title_record is not None:
             x = input(
-                f"Found record with similar title: {similar_title_record.title}\n Add anyway? (y/n)? "
+                f"Found record with similar title: `{similar_title_record.title}`\n\tAdd anyway? [y/N]? "
             )
         if x == "y":
             self._db_handler.append_record(new_record)

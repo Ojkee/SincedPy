@@ -5,11 +5,9 @@
 - [ ] Documentation in README
 - [ ] Mix logging parameters (e.g. @birthdays -w should show birthdays in current week)
 - [ ] Make recurring relative to creation date if user date is not provided
-- [ ] Make menu with selection upon dropping with similar names
 
 # Current
-- [ ] Prevent appending records with title that already exists in database
-
+- [ ] Make menu with selection upon dropping with similar names
 
 # Done
 - [x] Logging with date sorting 
@@ -23,3 +21,4 @@
 - [x] Adding with recurring dates
 - [x] Removing all
 - [x] Fixing log all
+- [x] Prevent appending records with title that already exists in database
