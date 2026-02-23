@@ -1,6 +1,6 @@
 from SincedPy.commands.command import CommandPattern
 from SincedPy.database_handler import DatabaseHandler
-from SincedPy.record import Record, RecordCategory, RecordStatus
+from SincedPy.record import Record
 
 
 class RemoveRecords(CommandPattern):
@@ -17,12 +17,9 @@ class RemoveRecords(CommandPattern):
                 x = input("You sure (y/n)? ")
                 if x.lower() in ["y", "yes"]:
                     self._db_handler.drop_all()
-            case [category] if RecordCategory.valid(category):
-                self._db_handler.drop_by(RecordCategory(category))
-            case [status] if RecordStatus.valid(status):
-                self._db_handler.drop_by(RecordStatus.from_str(status))
-            case [name]:
-                self._db_handler.drop_by(name)
+            case [param, *_]:
+                option = DatabaseHandler.option_of_param(param)
+                self._db_handler.drop_by(option)
 
     def undo(self) -> None:
         if self._record is None:

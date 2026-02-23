@@ -1,4 +1,6 @@
+from functools import cache
 from SincedPy.commands.command import CommandPattern
+from SincedPy.constants import get_ctx
 from SincedPy.database_handler import DatabaseHandler
 from SincedPy.record import Record, RecordCategory
 
@@ -17,7 +19,15 @@ class AppendRecord(CommandPattern):
         )
         new_record = Record.of_params(*self._record_params)
         new_record.category = RecordCategory(category).value
-        self._db_handler.append_record(new_record)
+
+        x = "y"
+        similar_title_record = self._record_with_similar_title(new_record.title)
+        if similar_title_record is not None:
+            x = input(
+                f"Found record with similar title: {similar_title_record.title}\n Add anyway? (y/n)? "
+            )
+        if x == "y":
+            self._db_handler.append_record(new_record)
 
     def undo(self) -> None:
         if self._new_record is None:
@@ -25,3 +35,27 @@ class AppendRecord(CommandPattern):
             raise RuntimeError(err_msg)
 
         self._db_handler.drop_by(self._new_record)
+
+    def _record_with_similar_title(self, title: str) -> Record | None:
+        ctx = get_ctx()
+        for record in self._db_handler.all_records():
+            if lev_distance(record.title, title) < ctx.SPELLING_DISTANCE:
+                return record
+
+        return None
+
+
+@cache
+def lev_distance(a: str, b: str) -> int:
+    if len(b) == 0:
+        return len(a)
+    if len(a) == 0:
+        return len(b)
+    if a[0] == b[0]:
+        return lev_distance(a[1:], b[1:])
+
+    return 1 + min(
+        lev_distance(a[1:], b),
+        lev_distance(a, b[1:]),
+        lev_distance(a[1:], b[1:]),
+    )
