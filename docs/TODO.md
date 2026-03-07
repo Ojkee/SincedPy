@@ -6,8 +6,8 @@
 - [ ] Make recurring relative to creation date if user date is not provided
 
 # Current
-- [ ] Setting status
 
+# Bugs 
 
 # Done
 - [x] Logging with date sorting 
@@ -22,3 +22,5 @@
 - [x] Removing all
 - [x] Fixing log all
 - [x] Prevent appending records with title that already exists in database
+- [x] Setting status
+- [x] Fix logging by parameter

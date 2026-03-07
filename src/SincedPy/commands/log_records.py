@@ -15,7 +15,7 @@ class LogRecords(CommandPattern):
             option = DatabaseHandler.option_of_param(self._params[0])
             records = self._db_handler.filter_by(option)
 
-        records = map(lambda r: r.next_appearance(), self._db_handler.all_records())
+        records = map(lambda r: r.next_appearance(), records)
         records = sorted(records, key=lambda r: (r.user_date is None, r.user_date))
         records = list(map(repr, records))
         records_str = (
