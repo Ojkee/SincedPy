@@ -1,15 +1,15 @@
 # To Be Done
-- [ ] Implementing *undo* 
 - [ ] `argparse` for clearer arguments
-- [ ] Documentation in README
 - [ ] Mix logging parameters (e.g. @birthdays -w should show birthdays in current week)
 - [ ] Make recurring relative to creation date if user date is not provided
 
 # Current
+- [ ] Documentation in README
 
 # Bugs 
 
 # Done
+- [x] Implementing *undo* 
 - [x] Logging with date sorting 
 - [x] Logging with week/month time period
 - [x] Removing records by title

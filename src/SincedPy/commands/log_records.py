@@ -16,7 +16,7 @@ class LogRecords(CommandPattern):
 
         records = map(lambda r: r.next_appearance(), records)
         records = sorted(records, key=lambda r: (r.user_date is None, r.user_date))
-        records = list(map(repr, records))
+        records = list(map(str, records))
         records_str = (
             "\n".join(records)
             if len(records) > 0
