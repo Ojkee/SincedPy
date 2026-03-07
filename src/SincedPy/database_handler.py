@@ -116,6 +116,11 @@ class DatabaseHandler:
         name_q = Query()
         self._db.remove(name_q.title == title)
 
+    @drop_by.register
+    def _(self, record: Record) -> None:
+        record_dict = record.to_dict()
+        self._db.remove(lambda r: r == record_dict)
+
     def replace_record(self, old_record: Record, new_record: Record) -> None:
         record = Query()
         cond = (record.title == old_record.title) & (

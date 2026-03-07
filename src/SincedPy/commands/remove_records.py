@@ -5,9 +5,8 @@ from SincedPy.record import Record
 
 class RemoveRecords(CommandPattern):
     def __init__(self, db_handler: DatabaseHandler, *params: str) -> None:
-        self._db_handler = db_handler
-        self._params = list(params)
         self._records: list[Record] | None = None
+        super().__init__(db_handler, *params)
 
     def execute(self) -> None:
         match self._params:

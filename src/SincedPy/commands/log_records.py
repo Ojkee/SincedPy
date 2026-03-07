@@ -4,8 +4,7 @@ from SincedPy.database_handler import DatabaseHandler
 
 class LogRecords(CommandPattern):
     def __init__(self, db_handler: DatabaseHandler, *params: str) -> None:
-        self._db_handler = db_handler
-        self._params = list(params)
+        super().__init__(db_handler, *params)
         self.undoable = False
 
     def execute(self) -> None:

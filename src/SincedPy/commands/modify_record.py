@@ -10,8 +10,7 @@ from SincedPy.record import Record, RecordCategory, RecordStatus
 
 class ModifyRecord(CommandPattern):
     def __init__(self, db_handler: DatabaseHandler, *params: str) -> None:
-        self._db_handler = db_handler
-        self._params = list(params)
+        super().__init__(db_handler, *params)
         self._old_record: Record | None = None
         self._new_record: Record | None = None
 

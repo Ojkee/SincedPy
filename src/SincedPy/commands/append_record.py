@@ -9,15 +9,12 @@ from .commands_util import extract_one
 
 class AppendRecord(CommandPattern):
     def __init__(self, db_handler: DatabaseHandler, *params: str) -> None:
-        self._db_handler = db_handler
-        self._record_params = list(params)
+        super().__init__(db_handler, *params)
         self._new_record: Record | None = None
 
     def execute(self) -> None:
-        category, self._record_params = extract_one(
-            self._record_params, RecordCategory.valid
-        )
-        new_record = Record.of_params(*self._record_params)
+        category, self._params = extract_one(self._params, RecordCategory.valid)
+        new_record = Record.of_params(*self._params)
         new_record.category = RecordCategory(category).value
 
         x = "y"
@@ -28,6 +25,7 @@ class AppendRecord(CommandPattern):
             )
         if x == "y":
             self._db_handler.append_record(new_record)
+        self._new_record = new_record
 
     def undo(self) -> None:
         if self._new_record is None:
