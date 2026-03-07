@@ -14,3 +14,13 @@ def extract_one[T](
             rest.append(param)
 
     return one, rest
+
+
+def print_and_pick[T](iter: Iterable[T]) -> T:
+    iter = list(iter)
+    for i, item in enumerate(iter):
+        print(i, item)
+    x = int(input("pick one (enter number): "))
+    if not (0 <= x < len(iter)):
+        raise ValueError(f"Enter value in range 0-{len(iter)}")
+    return iter[x]

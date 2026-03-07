@@ -105,6 +105,9 @@ class Record:
         )
         return f"{self.title}{date}"
 
+    def __repr__(self) -> str:
+        return str(self.to_dict())
+
     @classmethod
     def of_params(cls, *record_data: str) -> Record:
         match record_data:

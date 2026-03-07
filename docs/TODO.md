@@ -1,13 +1,13 @@
 # To Be Done
 - [ ] Implementing *undo* 
 - [ ] `argparse` for clearer arguments
-- [ ] Setting status
 - [ ] Documentation in README
 - [ ] Mix logging parameters (e.g. @birthdays -w should show birthdays in current week)
 - [ ] Make recurring relative to creation date if user date is not provided
 
 # Current
-- [ ] Make menu with selection upon dropping with similar names
+- [ ] Setting status
+
 
 # Done
 - [x] Logging with date sorting 

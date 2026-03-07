@@ -1,8 +1,8 @@
 import sys
 from typing import Callable
 
-from SincedPy.commands import AppendRecord, LogRecords, RemoveRecords
-from SincedPy.constants import get_db_handler
+from SincedPy.commands import AppendRecord, LogRecords, RemoveRecords, ModifyRecord
+from SincedPy.common import get_db_handler
 
 
 def main(params: list[str]) -> None:
@@ -11,6 +11,7 @@ def main(params: list[str]) -> None:
     commands: dict[str, Callable] = {
         "add": lambda *args: AppendRecord(handler, *args),
         "log": lambda *args: LogRecords(handler, *args),
+        "mod": lambda *args: ModifyRecord(handler, *args),
         "rem": lambda *args: RemoveRecords(handler, *args),
         "remove": lambda *args: RemoveRecords(handler, *args),
         "REMOVE!": lambda *_: RemoveRecords(handler, "all"),
@@ -24,7 +25,10 @@ def main(params: list[str]) -> None:
         return
 
     command = command_builer(*rest)
-    command.execute()
+    try:
+        command.execute()
+    except NotImplementedError as e:
+        print(f"Not yet implemented:\n\t{e}")
 
 
 def format_commands(commands: dict[str, Callable]) -> str:

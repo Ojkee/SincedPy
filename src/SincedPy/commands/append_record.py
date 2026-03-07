@@ -1,6 +1,6 @@
 from functools import cache
 from SincedPy.commands.command import CommandPattern
-from SincedPy.constants import get_ctx
+from SincedPy.common import get_ctx
 from SincedPy.database_handler import DatabaseHandler
 from SincedPy.record import Record, RecordCategory
 
@@ -21,10 +21,10 @@ class AppendRecord(CommandPattern):
         new_record.category = RecordCategory(category).value
 
         x = "y"
-        similar_title_record = self._record_with_similar_title(new_record.title)
-        if similar_title_record is not None:
+        similar_record = self._record_with_similar_title(new_record.title)
+        if similar_record is not None:
             x = input(
-                f"Found record with similar title: `{similar_title_record.title}`\n\tAdd anyway? [y/N]? "
+                f"Found record with similar title: `{similar_record.title}`\n\tAdd anyway? [y/N]? "
             )
         if x == "y":
             self._db_handler.append_record(new_record)

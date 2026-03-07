@@ -18,6 +18,19 @@ class DatabaseHandler:
         for rec in map(Record.from_dict, self._db.all()):
             yield rec
 
+    @staticmethod
+    def option_of_param(param: str) -> Any:
+        validators = [
+            (RecordCategory.valid, lambda c: RecordCategory(c)),
+            (RecordStatus.valid, lambda s: RecordStatus.from_str(s)),
+            (lambda f: f in ["-y", "-m", "-w", "-d"], lambda f: make_delta(f[1])),
+        ]
+
+        for valid, factory in validators:
+            if valid(param):
+                return factory(param)
+        return param
+
     @singledispatchmethod
     def filter_by(self, obj: object) -> list[Record]:
         not_impl_err = f"Log dispatch not implemented for type `{type(obj).__name__}`"
@@ -72,9 +85,7 @@ class DatabaseHandler:
 
     @singledispatchmethod
     def drop_by(self, obj: object) -> None:
-        not_impl_err = (
-            f"Remove dispatch not implemented for type `{type(obj).__name__}`"
-        )
+        not_impl_err = f"Remove dispatch for type `{type(obj).__name__}`"
         raise NotImplementedError(not_impl_err)
 
     @drop_by.register
@@ -92,15 +103,9 @@ class DatabaseHandler:
         name_q = Query()
         self._db.remove(name_q.title == title)
 
-    @staticmethod
-    def option_of_param(param: str) -> Any:
-        validators = [
-            (RecordCategory.valid, lambda c: RecordCategory(c)),
-            (RecordStatus.valid, lambda s: RecordStatus.from_str(s)),
-            (lambda f: f in ["-y", "-m", "-w", "-d"], lambda f: make_delta(f[1])),
-        ]
-
-        for valid, factory in validators:
-            if valid(param):
-                return factory(param)
-        return param
+    def replace_record(self, old_record: Record, new_record: Record) -> None:
+        record = Query()
+        cond = (record.title == old_record.title) & (
+            record.date_created == old_record.date_created.isoformat()
+        )
+        self._db.update(new_record.to_dict(), cond)

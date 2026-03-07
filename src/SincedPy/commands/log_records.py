@@ -6,6 +6,7 @@ class LogRecords(CommandPattern):
     def __init__(self, db_handler: DatabaseHandler, *params: str) -> None:
         self._db_handler = db_handler
         self._params = list(params)
+        self.undoable = False
 
     def execute(self) -> None:
         if len(self._params) == 0:
@@ -16,8 +17,13 @@ class LogRecords(CommandPattern):
 
         records = map(lambda r: r.next_appearance(), self._db_handler.all_records())
         records = sorted(records, key=lambda r: (r.user_date is None, r.user_date))
-        records = list(map(str, records))
-        print("No record fullfil this cirteria" if len(records) == 0 else records)
+        records = list(map(repr, records))
+        records_str = (
+            "\n".join(records)
+            if len(records) > 0
+            else "No record fullfil this cirteria"
+        )
+        print(records_str)
 
     def undo(self) -> None:
         print("Cannot `undo` logging")
