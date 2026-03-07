@@ -1,10 +1,23 @@
+from __future__ import annotations
+
 from datetime import datetime
 from functools import singledispatchmethod
 from typing import Any, Generator
 from dateutil.relativedelta import relativedelta
 from tinydb import TinyDB, Query
 
+from SincedPy.common import get_ctx
 from SincedPy.record import Record, RecordStatus, RecordCategory, make_delta
+
+_db_handler: DatabaseHandler | None = None
+
+
+def get_db_handler() -> DatabaseHandler:
+    global _db_handler
+    if _db_handler is None:
+        _records_db = TinyDB(get_ctx().RECORDS_PATH)
+        _db_handler = DatabaseHandler(_records_db)
+    return _db_handler
 
 
 class DatabaseHandler:
