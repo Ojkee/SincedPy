@@ -1,12 +1,16 @@
 # To Be Done
-- [ ] `argparse` for clearer arguments
-- [ ] Mix logging parameters (e.g. @birthdays -w should show birthdays in current week)
+- [ ] Implement help command
+- [ ] Handling DD/MM/YYYY date format
+- [ ] Nicer error handling
+  - [ ] add @category
 - [ ] Make recurring relative to creation date if user date is not provided
+- [ ] `argparse` for clearer arguments
+- [ ] REPL Mode
+- [ ] Mix logging parameters (e.g. @birthdays -w should show birthdays in current week)
 
 # Current
 - [ ] Documentation in README
 
-# Bugs 
 
 # Done
 - [x] Implementing *undo* 

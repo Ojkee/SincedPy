@@ -3,9 +3,10 @@ from SincedPy.database_handler import DatabaseHandler
 
 
 class LogRecords(CommandPattern):
-    def __init__(self, db_handler: DatabaseHandler, *params: str) -> None:
+    def __init__(self, db_handler: DatabaseHandler, out_stream, *params: str) -> None:
         super().__init__(db_handler, *params)
         self.undoable = False
+        self.out_stream = out_stream
 
     def execute(self) -> None:
         if len(self._params) == 0:
@@ -16,13 +17,9 @@ class LogRecords(CommandPattern):
 
         records = map(lambda r: r.next_appearance(), records)
         records = sorted(records, key=lambda r: (r.user_date is None, r.user_date))
-        records = list(map(str, records))
-        records_str = (
-            "\n".join(records)
-            if len(records) > 0
-            else "No record fullfil this cirteria"
-        )
-        print(records_str)
+        records = [str(record) for record in records]
+        records_str = "\n".join(records) if len(records) > 0 else "No records"
+        self.out_stream(records_str + "\n")
 
     def undo(self) -> None:
         print("Cannot `undo` logging")

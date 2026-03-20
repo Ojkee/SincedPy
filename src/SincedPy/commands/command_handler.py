@@ -2,6 +2,7 @@ from __future__ import annotations
 import pickle
 
 from pathlib import Path
+import sys
 from typing import Callable
 
 from SincedPy.commands.command import CommandPattern
@@ -20,7 +21,7 @@ class CommandHandler:
         self._commands: dict[str, Callable] = {
             "undo": lambda *_: _Undo(self.history),
             "add": lambda *args: AppendRecord(db_handler, *args),
-            "log": lambda *args: LogRecords(db_handler, *args),
+            "log": lambda *args: LogRecords(db_handler, sys.stdout.write, *args),
             "mod": lambda *args: ModifyRecord(db_handler, *args),
             "rem": lambda *args: RemoveRecords(db_handler, *args),
             "remove": lambda *args: RemoveRecords(db_handler, *args),

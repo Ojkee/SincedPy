@@ -68,7 +68,7 @@ class DatabaseHandler:
         if not isinstance(records, list):
             return [Record.from_dict(records)]
 
-        return list(map(Record.from_dict, records))
+        return [Record.from_dict(rec) for rec in records]
 
     @filter_by.register
     def _(self, category: RecordCategory) -> list[Record]:
