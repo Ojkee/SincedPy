@@ -9,10 +9,10 @@
 - [ ] Mix logging parameters (e.g. @birthdays -w should show birthdays in current week)
 
 # Current
-- [ ] Documentation in README
 
 
 # Done
+- [x] Documentation in README
 - [x] Implementing *undo* 
 - [x] Logging with date sorting 
 - [x] Logging with week/month time period
