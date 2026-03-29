@@ -4,7 +4,8 @@ from SincedPy.database_handler import get_db_handler
 from SincedPy.commands import CommandHandler
 
 
-def main(params: list[str]) -> None:
+def main() -> None:
+    params = sys.argv[1:]
     db_handler = get_db_handler()
 
     with CommandHandler(db_handler) as cmd_handler:
@@ -12,4 +13,4 @@ def main(params: list[str]) -> None:
 
 
 if __name__ == "__main__":
-    main(sys.argv[1:])
+    main()
