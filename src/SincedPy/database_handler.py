@@ -16,6 +16,8 @@ def get_db_handler() -> DatabaseHandler:
     global _db_handler
     if _db_handler is None:
         _records_db = TinyDB(get_ctx().RECORDS_PATH)
+        ctx = get_ctx()
+        ctx.RECORD_DIR_PATH.mkdir(parents=True, exist_ok=True)
         _db_handler = DatabaseHandler(_records_db)
     return _db_handler
 
