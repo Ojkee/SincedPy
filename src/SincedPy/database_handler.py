@@ -7,7 +7,7 @@ from dateutil.relativedelta import relativedelta
 from tinydb import TinyDB, Query
 
 from SincedPy.common import get_ctx
-from SincedPy.record import Record, RecordStatus, RecordCategory, make_delta
+from SincedPy.record import Record, RecordStatus, RecordCategory, RecordDate, make_delta
 
 _db_handler: DatabaseHandler | None = None
 
@@ -30,13 +30,13 @@ class DatabaseHandler:
         self._db.insert(record.to_dict())
 
     def all_records(self) -> Generator[Record]:
-        for rec in map(Record.from_dict, self._db.all()):
-            yield rec
+        yield from (Record.from_dict(rec) for rec in self._db.all())
 
     @staticmethod
     def option_of_param(param: str) -> Any:
         validators = [
             (RecordCategory.valid, lambda c: RecordCategory(c)),
+            (RecordDate.valid, lambda d: RecordDate.parse(d)),
             (RecordStatus.valid, lambda s: RecordStatus.from_str(s)),
             (lambda f: f in ["-y", "-m", "-w", "-d"], lambda f: make_delta(f[1])),
         ]

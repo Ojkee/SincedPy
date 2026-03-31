@@ -56,6 +56,44 @@ class RecordCategory:
         return self.value
 
 
+class RecordDate:
+    _USER_FORMAT = "%d/%m/%Y"
+    _SHORT_FORMAT = "%d/%m"
+    _VALID_FORMATS = (
+        _USER_FORMAT,
+        _SHORT_FORMAT,
+    )
+
+    @classmethod
+    def valid(cls, date: str) -> bool:
+        try:
+            for fmt in cls._VALID_FORMATS:
+                datetime.strptime(date, fmt)
+            return True
+        except ValueError:
+            return False
+
+    @classmethod
+    def parse(cls, date: str) -> datetime:
+        try:
+            return datetime.strptime(date, cls._USER_FORMAT)
+        except ValueError:
+            pass
+
+        try:
+            parsed = datetime.strptime(date, cls._SHORT_FORMAT)
+            now = datetime.now()
+            candidate = parsed.replace(year=now.year)
+            if candidate.date() < now.date():
+                candidate = candidate.replace(year=now.year + 1)
+        except ValueError:
+            raise ValueError(
+                f"Invalid date format: {date!r}. Wanted dd/mm/yyyy"
+            ) from None
+
+        return candidate
+
+
 @dataclass
 class Record:
     title: str
@@ -100,10 +138,11 @@ class Record:
         return parsed
 
     def __str__(self) -> str:
+        category = f" @{self.category}" if self.category else ""
         date = (
-            self.user_date.strftime(" - %d/%m/%y") if self.user_date is not None else ""
+            self.user_date.strftime(" - %d/%m/%Y") if self.user_date is not None else ""
         )
-        return f"{self.title}{date}"
+        return f"{self.title}{category}{date}"
 
     def __repr__(self) -> str:
         return str(self.to_dict())
@@ -114,11 +153,11 @@ class Record:
             case (title,):
                 return Record(title)
             case (title, user_date):
-                user_date = datetime.fromisoformat(user_date)
+                user_date = RecordDate.parse(user_date)
                 return Record(title, user_date=user_date)
             case (title, user_date, flag) if flag.startswith("-"):
                 delta = make_delta(flag[1:])
-                user_date = datetime.fromisoformat(user_date)
+                user_date = RecordDate.parse(user_date)
                 return Record(title, user_date=user_date, recurring_delta=delta)
             case (title, user_date, flag, flag_param) if flag.startswith("-"):
                 try:

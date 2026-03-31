@@ -22,8 +22,8 @@ CLI task management
 ```bash
 add name                              # adds record 
 add name @category                    # adds record that belongs to category
-add name DD-MM-YYYY                   # adds record with deadline
-add name DD-MM-YYYY -[d/w/m/y] number # adds recurring record, number is optional, eg. -w 8 => every 8 weeks, You can use @category
+add name DD/MM/YYYY                   # adds record with deadline
+add name DD/MM/YYYY -[d/w/m/y] number # adds recurring record, number is optional, eg. -w 8 => every 8 weeks, You can use @category
 ```
 
 ### LOG
@@ -40,7 +40,7 @@ log status     # logs records with status
 ```bash
 mod name new_name   # modifies name
 mod name @category  # modifies category
-mod name DD-MM-YYYY # modifies deadline
+mod name DD/MM/YYYY # modifies deadline
 mod status          # modifies status
 ```
 
