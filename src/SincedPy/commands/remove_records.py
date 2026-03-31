@@ -28,3 +28,12 @@ class RemoveRecords(CommandPattern):
             raise RuntimeError(err_msg)
         for record in self._records:
             self._db_handler.append_record(record)
+
+    @property
+    def help(self) -> str:
+        return """
+REMOVE!       # removes all
+rem name      # removes by name
+rem @category # removes all from category
+rem status    # removes all by status
+"""

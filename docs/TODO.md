@@ -1,5 +1,4 @@
 # To Be Done
-- [ ] Implement help command
 - [ ] Handling DD/MM/YYYY date format
 - [ ] Nicer error handling
   - [ ] add @category
@@ -12,6 +11,7 @@
 
 
 # Done
+- [x] Implement help command
 - [x] Documentation in README
 - [x] Implementing *undo* 
 - [x] Logging with date sorting 

@@ -42,6 +42,15 @@ class ModifyRecord(CommandPattern):
 
         self._db_handler.replace_record(self._new_record, self._old_record)
 
+    @property
+    def help(self) -> str:
+        return """
+mod name new_name   # modifies name
+mod name @category  # modifies category
+mod name DD/MM/YYYY # modifies deadline
+mod status          # modifies status
+"""
+
     def _save_replace(self, old: Record, option: Any) -> None:
         self._old_record = old
         self._new_record = self._modify_old(option, self._old_record)

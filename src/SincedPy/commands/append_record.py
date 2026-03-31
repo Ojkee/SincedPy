@@ -34,6 +34,15 @@ class AppendRecord(CommandPattern):
 
         self._db_handler.drop_by(self._new_record)
 
+    @property
+    def help(self) -> str:
+        return """
+add name                              # adds record 
+add name @category                    # adds record that belongs to category
+add name DD/MM/YYYY                   # adds record with deadline
+add name DD/MM/YYYY -[d/w/m/y] number # adds recurring record, number is optional, eg. -w 8 => every 8 weeks, You can use @category
+"""
+
     def _record_with_similar_title(self, title: str) -> Record | None:
         ctx = get_ctx()
         for record in self._db_handler.all_records():

@@ -10,12 +10,14 @@ class CommandPattern(ABC):
         self._params = list(params)
 
     @abstractmethod
-    def execute(self) -> None:
-        pass
+    def execute(self) -> None: ...
 
     @abstractmethod
-    def undo(self) -> None:
-        pass
+    def undo(self) -> None: ...
+
+    @property
+    @abstractmethod
+    def help(self) -> str: ...
 
     @property
     def db_handler(self) -> DatabaseHandler:

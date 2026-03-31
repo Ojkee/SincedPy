@@ -23,3 +23,13 @@ class LogRecords(CommandPattern):
 
     def undo(self) -> None:
         print("Cannot `undo` logging")
+
+    @property
+    def help(self) -> str:
+        return """
+log            # logs all
+log name       # logs records with name
+log -[d/w/m/y] # logs records in day/week/month/year
+log @category  # logs records from category
+log status     # logs records with status
+"""

@@ -18,6 +18,13 @@ CLI task management
 
 # Commands
 
+### HELP
+```bash                               
+help                                  # shows all commands
+help cmd                              # shows help for certain command
+```
+
+
 ### ADD
 ```bash
 add name                              # adds record 
@@ -26,35 +33,38 @@ add name DD/MM/YYYY                   # adds record with deadline
 add name DD/MM/YYYY -[d/w/m/y] number # adds recurring record, number is optional, eg. -w 8 => every 8 weeks, You can use @category
 ```
 
+
 ### LOG
 ```bash
-log            # logs all
-log name       # logs records with name
-log -[d/w/m/y] # logs records in day/week/month/year
-log @category  # logs records from category
-log status     # logs records with status
-```
+log                                   # logs all
+log name                              # logs records with name
+log -[d/w/m/y]                        # logs records in day/week/month/year
+log @category                         # logs records from category
+log status                            # logs records with status
+```                                   
 
 
 ### MODIFY
-```bash
-mod name new_name   # modifies name
-mod name @category  # modifies category
-mod name DD/MM/YYYY # modifies deadline
-mod status          # modifies status
-```
+```bash                               
+mod name new_name                     # modifies name
+mod name @category                    # modifies category
+mod name DD/MM/YYYY                   # modifies deadline
+mod status                            # modifies status
+```                                   
+
 
 ### REMOVE
-```bash
-REMOVE!       # removes all
-rem name      # removes by name
-rem @category # removes all from category
-rem status    # removes all by status
+```bash                               
+REMOVE!                               # removes all
+rem name                              # removes by name
+rem @category                         # removes all from category
+rem status                            # removes all by status
 ```
 
+
 ### Undo
-```bash
-undo # undo last undoable command, cannot undo 'undo', stackable
+```bash                               
+undo                                  # undo last undoable command, cannot undo 'undo', stackable
 ```
 
 
@@ -82,7 +92,7 @@ source .venv/bin/activate
 
 ### Install
 ```bash
-pip install -e .
+pipx install .
 ```
 
 
