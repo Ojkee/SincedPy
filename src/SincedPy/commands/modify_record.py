@@ -1,3 +1,4 @@
+from datetime import datetime
 from functools import singledispatchmethod
 from typing import Any
 from dataclasses import replace
@@ -62,3 +63,7 @@ class ModifyRecord(CommandPattern):
     @_modify_old.register
     def _(self, option: str, record: Record) -> Record:
         return replace(record, title=option)
+
+    @_modify_old.register
+    def _(self, option: datetime, record: Record) -> Record:
+        return replace(record, user_date=option)

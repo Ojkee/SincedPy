@@ -25,3 +25,4 @@ ENV/
 # TinyDB / local data
 records/
 
+**/__pycache__/

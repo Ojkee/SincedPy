@@ -37,7 +37,12 @@ class AppendRecord(CommandPattern):
     def _record_with_similar_title(self, title: str) -> Record | None:
         ctx = get_ctx()
         for record in self._db_handler.all_records():
-            if lev_distance(record.title, title) < ctx.SPELLING_DISTANCE:
+            if record.title == title:
+                return record
+            if (
+                len(record.title) > ctx.SPELLING_DISTANCE
+                and lev_distance(record.title, title) <= ctx.SPELLING_DISTANCE
+            ):
                 return record
 
         return None

@@ -66,12 +66,13 @@ class RecordDate:
 
     @classmethod
     def valid(cls, date: str) -> bool:
-        try:
-            for fmt in cls._VALID_FORMATS:
+        for fmt in cls._VALID_FORMATS:
+            try:
                 datetime.strptime(date, fmt)
-            return True
-        except ValueError:
-            return False
+                return True
+            except ValueError:
+                pass
+        return False
 
     @classmethod
     def parse(cls, date: str) -> datetime:

@@ -11,6 +11,7 @@ dependencies = [
   "tinydb",
   "python-dateutil",
   "platformdirs",
+  "pytest",
 ]
 
 [project.scripts]
