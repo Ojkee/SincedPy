@@ -50,7 +50,7 @@ add name DD/MM/YYYY -[d/w/m/y] number # adds recurring record, number is optiona
                 return record
             if (
                 len(record.title) > ctx.SPELLING_DISTANCE
-                and lev_distance(record.title, title) <= ctx.SPELLING_DISTANCE
+                and levenshtein(record.title, title) <= ctx.SPELLING_DISTANCE
             ):
                 return record
 
@@ -58,16 +58,16 @@ add name DD/MM/YYYY -[d/w/m/y] number # adds recurring record, number is optiona
 
 
 @cache
-def lev_distance(a: str, b: str) -> int:
+def levenshtein(a: str, b: str) -> int:
     if len(b) == 0:
         return len(a)
     if len(a) == 0:
         return len(b)
     if a[0] == b[0]:
-        return lev_distance(a[1:], b[1:])
+        return levenshtein(a[1:], b[1:])
 
     return 1 + min(
-        lev_distance(a[1:], b),
-        lev_distance(a, b[1:]),
-        lev_distance(a[1:], b[1:]),
+        levenshtein(a[1:], b),
+        levenshtein(a, b[1:]),
+        levenshtein(a[1:], b[1:]),
     )

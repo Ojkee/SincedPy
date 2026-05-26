@@ -1,17 +1,20 @@
 # To Be Done
-- [ ] Handling DD/MM/YYYY date format
+- [ ] log by category
+  - [ ] log only name and deadline
+  - [ ] log only 'ongoing'
 - [ ] Nicer error handling
   - [ ] add @category
 - [ ] Make recurring relative to creation date if user date is not provided
-- [ ] `argparse` for clearer arguments
 - [ ] REPL Mode
 - [ ] Mix logging parameters (e.g. @birthdays -w should show birthdays in current week)
+
 
 # Current
 
 
 # Done
 - [x] Implement help command
+- [x] Handling DD/MM/YYYY date format
 - [x] Documentation in README
 - [x] Implementing *undo* 
 - [x] Logging with date sorting 
